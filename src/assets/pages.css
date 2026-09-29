@@ -239,42 +239,6 @@
   font-size: 16px;
   line-height: 1.65;
 }
-.uc-form {
-  margin-top: 26px;
-  text-align: left;
-  opacity: 0.55;
-}
-.uc-form fieldset {
-  display: grid;
-  gap: 14px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.uc-form label span {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--ink-2);
-  font-size: 13px;
-  font-weight: 500;
-}
-.uc-form input {
-  width: 100%;
-  height: 46px;
-  padding: 0 16px;
-  background: #0f0f10;
-  border: 1px solid var(--line-2);
-  border-radius: 14px;
-  color: #fff;
-  font: inherit;
-}
-.uc-form input:disabled,
-.uc-form button:disabled {
-  cursor: not-allowed;
-}
-.uc-form .pill {
-  width: 100%;
-}
 .uc-actions {
   display: flex;
   flex-wrap: wrap;
@@ -282,19 +246,6 @@
   gap: 12px;
   margin-top: 26px;
 }
-.uc-divider {
-  height: 1px;
-  margin: 34px 0 6px;
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.2) 0 10px,
-    transparent 10px 30px
-  );
-}
-.uc .uc-fine {
-  font-size: 14px;
-}
-
 @media (max-width: 720px) {
   .page-head {
     padding-top: 40px;

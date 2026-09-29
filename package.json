@@ -3,14 +3,15 @@
   "private": true,
   "version": "0.2.0",
   "type": "module",
-  "description": "OpenOffensive marketing site for openoffensive.ai (Vue 3 + Vite).",
+  "description": "OpenOffensive marketing site (Vue 3 + Vite).",
   "engines": {
     "node": ">=20.19"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/prerender.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "bash scripts/deploy-aws.sh"
   },
   "dependencies": {
     "vue": "^3.5.25",

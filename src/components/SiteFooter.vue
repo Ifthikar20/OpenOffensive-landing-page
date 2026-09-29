@@ -30,7 +30,6 @@ const year = new Date().getFullYear()
             <router-link :to="{ path: '/docs', hash: '#quickstart' }">Quickstart</router-link>
             <router-link :to="{ path: '/docs', hash: '#how-it-works' }">How it works</router-link>
             <router-link to="/docs">Documentation</router-link>
-            <router-link to="/login">Sign in</router-link>
           </div>
           <div class="foot-col">
             <h4>Resources</h4>

@@ -11,7 +11,6 @@ and needs no server.
 | `/` | Landing page |
 | `/docs` | Documentation: overview, quickstart, concepts, commands, configuration |
 | `/blog`, `/blog/:slug` | Blog |
-| `/login` | Sign-in placeholder. Under construction |
 
 The docs page is intentionally high level. Deeper documentation stays in the main repository.
 
@@ -27,7 +26,7 @@ npm run preview    # serves dist/ locally
 ```
 
 `npm run build` also runs `scripts/prerender.mjs`, which writes one HTML file per route with its own
-title, description, and canonical URL, plus `404.html`, `sitemap.xml`, `robots.txt`, and `CNAME`.
+title, description, and canonical URL, plus `404.html`, `sitemap.xml`, and `robots.txt`.
 Deep links such as `/docs/` therefore answer with a normal 200 on a static host.
 
 ## Where things live
@@ -41,13 +40,14 @@ src/
   pages/          one file per route
 public/           favicon and the optimized hero image
 design/           source artwork that is not deployed
-scripts/          the post-build prerender step
+infra/            the CloudFormation template for AWS
+scripts/          the post-build prerender step and the AWS deploy script
 ```
 
 ## Common changes
 
-- **Domain.** Set `SITE.url` in `src/lib/site.js`. The canonical URLs, sitemap, robots file, and
-  `CNAME` are all generated from it.
+- **Domain.** Set `SITE.url` in `src/lib/site.js`. The canonical URLs, sitemap, and robots file
+  are generated from it.
 - **Colors.** The palette is defined once at the top of `src/assets/base.css`. It was sampled from
   the hero image.
 - **Hero image.** `design/background.png` is the source. The site serves `public/background.webp`.
@@ -61,37 +61,55 @@ scripts/          the post-build prerender step
   register it in `src/lib/postComponents.js`.
 - **Docs copy.** Edit `src/content/docs.js` and the components in `src/components/docs/`.
 
-## Deploy
+## Deploy to AWS
 
-### GitHub Pages
+The site is static, so the setup is small: a private S3 bucket behind CloudFront. CloudFront serves
+it over HTTPS on its own address, so you can go live without touching a domain. One CloudFormation
+stack creates everything, and one command builds and publishes the site.
 
-The workflow in `.github/workflows/deploy.yml` builds the site and publishes it on every push to
-`main`.
+You need the AWS CLI, Node, and working credentials for the account you want to use.
 
-1. In the repository, open **Settings, Pages** and set **Source** to **GitHub Actions**.
-2. Push to `main`, or run the workflow by hand from the **Actions** tab.
-3. Open **Settings, Pages, Custom domain**, enter your domain, and enable **Enforce HTTPS** once the
-   certificate is issued.
-4. At your domain registrar, add these DNS records.
+```bash
+aws sts get-caller-identity   # shows which account you are about to use
+npm run deploy
+```
 
-   | Type | Host | Value |
-   | --- | --- | --- |
-   | A | `@` | `185.199.108.153` |
-   | A | `@` | `185.199.109.153` |
-   | A | `@` | `185.199.110.153` |
-   | A | `@` | `185.199.111.153` |
-   | CNAME | `www` | `ifthikar20.github.io` |
+The first run takes several minutes while CloudFront is created, then prints the site's address.
+Later runs upload only what changed and clear the cache. To use a named profile, run
+`AWS_PROFILE=<name> npm run deploy`.
 
-   Optional IPv6 records for `@`: `2606:50c0:8000::153`, `2606:50c0:8001::153`,
-   `2606:50c0:8002::153`, `2606:50c0:8003::153`.
+What the stack creates:
 
-DNS changes can take a while to propagate. GitHub documents the current records in
-[Managing a custom domain for your GitHub Pages site](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site).
+- A private, encrypted S3 bucket that only CloudFront can read.
+- A CloudFront distribution that redirects HTTP to HTTPS and adds standard security headers.
+- A small function that maps `/docs` onto `docs/index.html`, and a custom 404 page.
 
-The site expects to be served from the root of a domain. It will not work from a sub-path such as
-`ifthikar20.github.io/OpenOffensive-landing-page/` until the custom domain is set.
+At low traffic this costs pennies a month. The template and script contain no keys or account IDs.
+They use whatever credentials your AWS CLI already has.
 
-### Any other static host
+### Use your own domain
 
-Use `npm run build` as the build command and `dist` as the output directory. Cloudflare Pages,
-Netlify, and Vercel all work without extra configuration.
+1. In AWS Certificate Manager, region `us-east-1`, request a public certificate for the domain and
+   add the DNS record it asks for.
+2. Deploy again with the domain and certificate:
+
+   ```bash
+   DOMAIN_NAME=www.example.com CERTIFICATE_ARN=arn:aws:acm:us-east-1:... npm run deploy
+   ```
+
+3. At your DNS provider, point the domain at the CloudFront address that the deploy printed.
+4. Set `SITE.url` in `src/lib/site.js` to the final address so canonical URLs and the sitemap match.
+
+### Remove everything
+
+```bash
+BUCKET=$(aws cloudformation describe-stacks --stack-name openoffensive-site \
+  --query "Stacks[0].Outputs[?OutputKey=='BucketName'].OutputValue" --output text)
+aws s3 rm "s3://$BUCKET" --recursive
+aws cloudformation delete-stack --stack-name openoffensive-site
+```
+
+### Other static hosts
+
+Use `npm run build` as the build command and `dist` as the output directory. Netlify, Vercel, and
+Cloudflare Pages work without extra configuration.

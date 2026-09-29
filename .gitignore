@@ -6,3 +6,9 @@ dist/
 .DS_Store
 # local tooling
 .claude/
+# secrets: never commit these
+.env
+.env.*
+*.pem
+*.key
+.aws/

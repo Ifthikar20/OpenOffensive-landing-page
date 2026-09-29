@@ -1,8 +1,8 @@
-// Post-build step for a static host (GitHub Pages, Cloudflare Pages, Netlify, S3, ...).
+// Post-build step for a static host (S3 with CloudFront, Netlify, Cloudflare Pages, ...).
 //  - One HTML file per route with its own <title>, description, and canonical URL,
 //    so deep links answer 200 and share properly instead of leaning on a 404 fallback.
 //  - dist/404.html: the app shell, noindex, for unknown paths.
-//  - sitemap.xml, robots.txt, and CNAME (custom domain) generated from src/lib/site.js.
+//  - sitemap.xml and robots.txt generated from src/lib/site.js.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -58,6 +58,5 @@ write(
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`
 )
 write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE.url}/sitemap.xml\n`)
-write('CNAME', `${new URL(SITE.url).host}\n`)
 
-console.log(`prerender: ${ALL_PAGES.length} routes + 404.html, sitemap.xml, robots.txt, CNAME`)
+console.log(`prerender: ${ALL_PAGES.length} routes + 404.html, sitemap.xml, robots.txt`)

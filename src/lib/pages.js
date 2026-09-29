@@ -17,13 +17,6 @@ export const STATIC_PAGES = [
     description:
       'Notes on autonomous AI penetration testing — announcements, engineering deep-dives, and practical guides from the OpenOffensive team.',
   },
-  {
-    path: '/login',
-    title: 'Sign in — OpenOffensive',
-    description:
-      'Sign-in for the OpenOffensive console is under construction. The console is an invite-only beta.',
-    noindex: true,
-  },
 ]
 
 const POST_PAGES = posts.map((p) => ({

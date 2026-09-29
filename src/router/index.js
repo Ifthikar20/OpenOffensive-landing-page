@@ -11,7 +11,6 @@ const routes = [
     component: () => import('@/pages/BlogPostPage.vue'),
     props: true,
   },
-  { path: '/login', name: 'login', component: () => import('@/pages/LoginPage.vue') },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',

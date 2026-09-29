@@ -30,9 +30,6 @@ watch(
             <router-link :to="{ path: '/docs', hash: '#quickstart' }">
               <b>Quickstart</b><span>One line to get the CLI</span>
             </router-link>
-            <router-link to="/login">
-              <b>Console</b><span>The web dashboard. Sign-in is coming soon</span>
-            </router-link>
           </NavDropdown>
 
           <NavDropdown label="Docs">
@@ -61,7 +58,6 @@ watch(
           <a class="star-link" :href="GITHUB" target="_blank" rel="noopener">
             <Icon name="star" :size="17" /> Star on GitHub
           </a>
-          <PillButton class="hide-md" to="/login" size="sm">Sign in</PillButton>
           <PillButton class="hide-md" :to="{ path: '/docs', hash: '#quickstart' }" size="sm">Get started</PillButton>
           <button
             class="nav-burger"
@@ -82,7 +78,6 @@ watch(
       <router-link to="/docs">Docs</router-link>
       <router-link to="/blog">Blog</router-link>
       <a :href="GITHUB" target="_blank" rel="noopener">GitHub</a>
-      <router-link to="/login">Sign in</router-link>
       <router-link :to="{ path: '/docs', hash: '#quickstart' }" class="mobile-cta">Get started</router-link>
     </div>
 
