@@ -1,0 +1,292 @@
+/* Home hero, plus the code block and footer that the inner pages share. */
+
+/* ---------- hero ---------- */
+.hero-band {
+  padding-top: 20px;
+}
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  min-height: clamp(560px, 48.5vw, 940px);
+  padding: 84px 24px 96px;
+  border-radius: var(--radius);
+  text-align: center;
+  color: #fff;
+  background-color: #6b5b95; /* shown while the image loads */
+  background-image: url('/background.webp');
+  background-size: cover;
+  background-position: center;
+}
+/* a light veil keeps white text legible across the sandy corners of the image */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(13, 10, 34, 0.14) 0%, rgba(13, 10, 34, 0.3) 100%);
+}
+.hero-inner {
+  width: 100%;
+  max-width: 1120px;
+}
+.announce {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 5px 5px 5px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 500;
+  text-align: left;
+  text-shadow: 0 1px 3px rgba(13, 10, 34, 0.35);
+  transition: background 0.15s ease;
+}
+.announce:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.announce .dot {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--indigo);
+}
+.hero h1 {
+  max-width: 1100px;
+  margin: 38px auto 0;
+  font-size: clamp(34px, 4vw, 70px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.06;
+  text-wrap: balance;
+  text-shadow: 0 2px 24px rgba(13, 10, 34, 0.25);
+}
+.hero .sub {
+  max-width: 780px;
+  margin: 28px auto 0;
+  font-size: clamp(16px, 1.4vw, 22px);
+  font-weight: 400;
+  line-height: 1.55;
+  text-wrap: balance;
+  text-shadow: 0 1px 3px rgba(13, 10, 34, 0.35);
+}
+.hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 38px;
+}
+.hero-rule {
+  margin-top: 14px;
+}
+/* dotted guide cells under the card corners */
+.hero-corners {
+  position: relative;
+  height: 76px;
+}
+.hero-corners::before,
+.hero-corners::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: clamp(72px, 9vw, 172px);
+  height: 64px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.26) 1px, transparent 1.4px);
+  background-size: 14px 14px;
+  border: 1px dashed var(--line);
+  border-top: 0;
+}
+.hero-corners::before {
+  left: 0;
+}
+.hero-corners::after {
+  right: 0;
+}
+
+/* ---------- code block ---------- */
+.term {
+  max-width: 780px;
+  margin: 36px auto 0;
+  overflow: hidden;
+  text-align: left;
+  background: #0a0a0d;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+}
+.term.flush {
+  max-width: none;
+  margin: 14px 0 0;
+}
+.term-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 8px 7px 16px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.025);
+}
+.term-name {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.copy:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+.copy .sq {
+  display: grid;
+  place-items: center;
+}
+.copy.copied {
+  color: var(--accent);
+}
+.term-body {
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+.cmd {
+  white-space: pre;
+}
+.cmd.dim {
+  color: rgba(255, 255, 255, 0.42);
+}
+.prompt {
+  margin-right: 10px;
+  color: var(--muted);
+  user-select: none;
+}
+
+/* ---------- footer (inner pages) ---------- */
+.site-footer {
+  margin-top: 112px;
+}
+.foot-top {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr;
+  gap: 48px;
+  padding: 56px 24px 44px;
+}
+.foot-brand .brand {
+  margin-bottom: 16px;
+}
+.foot-tag {
+  max-width: 330px;
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+.foot-social a {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  color: var(--ink-2);
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.foot-social a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.foot-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.foot-col h4 {
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.foot-col a {
+  display: block;
+  padding: 5px 0;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+.foot-col a:hover {
+  color: #fff;
+}
+.foot-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px 44px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 720px) {
+  .hero {
+    min-height: 0;
+    padding: 56px 18px 64px;
+    border-radius: 22px;
+  }
+  .announce {
+    font-size: 14px;
+    padding-left: 16px;
+  }
+  .hero-cta .pill {
+    width: 100%;
+  }
+  .term-body {
+    padding: 12px 14px;
+    font-size: 12.5px;
+  }
+  .foot-top {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 44px 8px 32px;
+  }
+  .foot-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .foot-bottom {
+    padding: 20px 8px 36px;
+  }
+  .site-footer {
+    margin-top: 80px;
+  }
+}
