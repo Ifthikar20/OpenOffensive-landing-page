@@ -15,8 +15,8 @@
   border-radius: var(--radius);
   text-align: center;
   color: #fff;
-  background-color: #6b5b95; /* shown while the image loads */
-  background-image: url('/background.webp');
+  background-color: #6b5b95; /* shown only while the image loads */
+  background-image: url('./background.webp');
   background-size: cover;
   background-position: center;
 }

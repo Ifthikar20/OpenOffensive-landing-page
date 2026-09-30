@@ -9,7 +9,7 @@
   --ink: #ffffff;
   --ink-2: rgba(255, 255, 255, 0.78);
   --muted: rgba(255, 255, 255, 0.56);
-  /* palette sampled from public/background.webp */
+  /* palette sampled from src/assets/background.webp */
   --accent: #c7bbef; /* soft lavender: links, active states */
   --accent-strong: #8a76c2; /* dusty violet: small filled elements */
   --indigo: #474080; /* deep indigo from the lower left of the image */
