@@ -61,53 +61,66 @@ scripts/          the post-build prerender step and the AWS deploy script
   register it in `src/lib/postComponents.js`.
 - **Docs copy.** Edit `src/content/docs.js` and the components in `src/components/docs/`.
 
-## Deploy to AWS
+## Deploy to AWS (Amplify Hosting)
 
-The site is static, so the setup is small: a private S3 bucket behind CloudFront. CloudFront serves
-it over HTTPS on its own address, so you can go live without touching a domain. One CloudFormation
-stack creates everything, and one command builds and publishes the site.
+The simplest option: no server and no key file. Amplify builds from GitHub on every push and serves
+the site over HTTPS through CloudFront. The build is described in `amplify.yml`.
 
-You need the AWS CLI, Node, and working credentials for the account you want to use.
+1. Push this repo to GitHub.
+2. In the AWS console, open **AWS Amplify**, choose **Host web app**, connect GitHub, and pick the
+   repo and the `main` branch. Amplify picks up `amplify.yml`. Save and deploy.
+3. Open **Hosting > Custom domains**, add `openoffensive.ai`, and let Amplify create its certificate.
+4. In Cloudflare DNS, add the CNAME records Amplify shows (one to validate the certificate, one for
+   the site). Set them to **DNS only** (grey cloud) so validation succeeds.
+5. Set `SITE.url` in `src/lib/site.js` to the final address if it differs from `https://openoffensive.ai`.
 
-```bash
-aws sts get-caller-identity   # shows which account you are about to use
-npm run deploy
-```
+From then on, `git push` deploys. If a page such as `/docs` returns 404, add a rewrite rule in
+**Hosting > Rewrites and redirects**: source `/<*>`, target `/<*>/index.html`, type `200`, limited
+to paths without a file extension.
 
-The first run takes several minutes while CloudFront is created, then prints the site's address.
-Later runs upload only what changed and clear the cache. To use a named profile, run
-`AWS_PROFILE=<name> npm run deploy`.
+## Alternative: EC2 + nginx + Cloudflare
 
-What the stack creates:
+The site is static, so the simplest setup is one small EC2 instance running nginx, with Cloudflare
+in front for DNS and HTTPS. `npm run deploy` builds the site, installs nginx on the first run, and
+uploads the files over SSH.
 
-- A private, encrypted S3 bucket that only CloudFront can read.
-- A CloudFront distribution that redirects HTTP to HTTPS and adds standard security headers.
-- A small function that maps `/docs` onto `docs/index.html`, and a custom 404 page.
+### 1. Create the server (once)
 
-At low traffic this costs pennies a month. The template and script contain no keys or account IDs.
-They use whatever credentials your AWS CLI already has.
+1. In the EC2 console, launch a `t3.micro` (or `t4g.micro`) with **Ubuntu 24.04**.
+2. Create a key pair and download the `.pem`. Save it outside the repo, for example
+   `~/.ssh/openoffensive.pem`. `*.pem` is git-ignored, and the deploy script never copies it anywhere.
+3. In the instance's security group, allow inbound **SSH (22)** from your IP only, and **HTTP (80)**
+   from anywhere.
+4. Optional but recommended: allocate an **Elastic IP** and attach it, so the address survives a reboot.
 
-### Use your own domain
-
-1. In AWS Certificate Manager, region `us-east-1`, request a public certificate for the domain and
-   add the DNS record it asks for.
-2. Deploy again with the domain and certificate:
-
-   ```bash
-   DOMAIN_NAME=www.example.com CERTIFICATE_ARN=arn:aws:acm:us-east-1:... npm run deploy
-   ```
-
-3. At your DNS provider, point the domain at the CloudFront address that the deploy printed.
-4. Set `SITE.url` in `src/lib/site.js` to the final address so canonical URLs and the sitemap match.
-
-### Remove everything
+### 2. Deploy
 
 ```bash
-BUCKET=$(aws cloudformation describe-stacks --stack-name openoffensive-site \
-  --query "Stacks[0].Outputs[?OutputKey=='BucketName'].OutputValue" --output text)
-aws s3 rm "s3://$BUCKET" --recursive
-aws cloudformation delete-stack --stack-name openoffensive-site
+EC2_HOST=<elastic-ip> npm run deploy
 ```
+
+Options: `KEY_PATH` (default `~/.ssh/openoffensive.pem`) and `EC2_USER` (`ubuntu` by default, or
+`ec2-user` on Amazon Linux). Run it again after any change to publish the update.
+
+### 3. Point the domain with Cloudflare
+
+1. In Cloudflare DNS, add an `A` record for `@` (and `www`) pointing at the Elastic IP, with the
+   orange cloud (Proxied) on.
+2. Under **SSL/TLS**, set the mode to **Flexible**. Cloudflare serves HTTPS to visitors and talks
+   plain HTTP to the server. Turn on **Always Use HTTPS** under Edge Certificates.
+3. Confirm `SITE.url` in `src/lib/site.js` matches the final address.
+
+For stricter security, install a Cloudflare Origin Certificate on nginx, switch to **Full (strict)**,
+and close port 80 to everything except Cloudflare's IP ranges.
+
+The nginx config is in `infra/nginx.conf`.
+
+### Alternative: S3 + CloudFront
+
+`npm run deploy:s3` publishes to a private S3 bucket behind CloudFront using
+`infra/site.yaml`. It needs the AWS CLI and credentials, not a key file. To use a custom domain,
+run `DOMAIN_NAME=www.example.com CERTIFICATE_ARN=arn:aws:acm:us-east-1:... npm run deploy:s3`. To
+remove it, empty the bucket and run `aws cloudformation delete-stack --stack-name openoffensive-site`.
 
 ### Other static hosts
 
