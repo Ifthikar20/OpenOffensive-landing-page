@@ -59,7 +59,7 @@ aws s3 sync dist "s3://$BUCKET" --region "$REGION" --delete --exclude "assets/*"
   --cache-control "no-cache"
 # Be explicit about the image type so it never depends on the local MIME table.
 aws s3 cp dist/assets "s3://$BUCKET/assets" --region "$REGION" --recursive \
-  --exclude "*" --include "*.webp" --content-type image/webp \
+  --exclude "*" --include "*.jpg" --content-type image/jpeg \
   --cache-control "public,max-age=31536000,immutable"
 
 echo "Clearing the CloudFront cache..."

@@ -16,7 +16,7 @@
   text-align: center;
   color: #fff;
   background-color: #6b5b95; /* shown only while the image loads */
-  background-image: url('./background.webp');
+  background-image: url('./background.jpg');
   background-size: cover;
   background-position: center;
 }

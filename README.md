@@ -50,11 +50,11 @@ scripts/          the post-build prerender step and the AWS deploy script
   are generated from it.
 - **Colors.** The palette is defined once at the top of `src/assets/base.css`. It was sampled from
   the hero image.
-- **Hero image.** `design/background.png` is the source. The site serves `src/assets/background.webp`.
+- **Hero image.** `design/background.png` is the source. The site serves `src/assets/background.jpg`.
   After replacing the source, regenerate it:
 
   ```bash
-  cwebp -q 80 -m 6 design/background.png -o src/assets/background.webp
+  sips -s format jpeg -s formatOptions 82 design/background.png --out src/assets/background.jpg
   ```
 
 - **Blog.** Add an entry to `src/lib/posts.js`, create the post body in `src/content/posts/`, and
